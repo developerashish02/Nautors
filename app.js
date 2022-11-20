@@ -11,8 +11,7 @@ const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
 
-// Geeting all tours
-app.get('/api/v1/tours', (req, res) => {
+const getAllTours = (req, res) => {
   res.status(200).json({
     status: 'success',
     result: tours.length,
@@ -20,10 +19,9 @@ app.get('/api/v1/tours', (req, res) => {
       tours,
     },
   });
-});
+};
 
-// get single user
-app.get('/api/v1/tours/:id', (req, res) => {
+const getTour = (req, res) => {
   const id = req.params.id;
   const tour = tours.find((ele) => ele.id === Number(id));
 
@@ -40,10 +38,9 @@ app.get('/api/v1/tours/:id', (req, res) => {
       tour,
     },
   });
-});
+};
 
-// created tour
-app.post('/api/v1/tours', (req, res) => {
+const createTour = (req, res) => {
   const newId = tours.length - 1 + 1;
   const newTour = Object.assign({ id: newId }, req.body);
 
@@ -61,7 +58,44 @@ app.post('/api/v1/tours', (req, res) => {
       });
     }
   );
-});
+};
+
+const updateTour = (req, res) => {
+  if (req.params.id * 1 > tours.length) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Invalid Id',
+    });
+  }
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Updated User Successfully',
+    data: '<h1> Updated </h1>',
+  });
+};
+
+const deleteTour = (req, res) => {
+  if (req.params.id * 1 > tours.length) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Invalid Id',
+    });
+  }
+
+  res.status(204).json({
+    status: 'success',
+    message: 'deleted successfully',
+  });
+};
+
+app.route('/api/v1/tours').get(getAllTours).post(createTour);
+
+app
+  .route('/api/v1/tours/:id')
+  .get(getTour)
+  .patch(updateTour)
+  .delete(deleteTour);
 
 app.listen(port, () => {
   console.log(`App runnign on port ${port}`);
