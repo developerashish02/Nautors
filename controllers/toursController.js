@@ -4,6 +4,18 @@ const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
 );
 
+exports.bodyContain = (req, res, next) => {
+  console.log('working');
+  if (!req.body.name || !req.body.price) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'bad request',
+    });
+  }
+
+  next();
+};
+
 exports.checkId = (req, res, next, val) => {
   console.log(`The value is ${val}`);
   if (req.params.id * 1 > tours.length) {
