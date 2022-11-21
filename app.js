@@ -9,9 +9,7 @@ const userRouter = require('./routes/usersRoutes');
 app.use(morgan('dev'));
 app.use(express.json());
 
-const port = 3000;
-
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 
-app.listen(port);
+module.exports = app;
