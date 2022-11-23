@@ -5,12 +5,10 @@ const router = express.Router();
 // CONTROLLERS
 const toursControllers = require('../controllers/toursController');
 
-router.param('id', toursControllers.checkId);
-
 router
   .route('/')
   .get(toursControllers.getAllTours)
-  .post(toursControllers.bodyContain, toursControllers.createTour);
+  .post(toursControllers.createTour);
 router
   .route('/:id')
   .get(toursControllers.getTour)
