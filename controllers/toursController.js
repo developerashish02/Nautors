@@ -1,5 +1,7 @@
 const fs = require('fs');
 
+const tourControllers = require('../model/tours');
+
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
 );
@@ -29,6 +31,21 @@ exports.checkId = (req, res, next, val) => {
 };
 
 exports.getAllTours = (req, res) => {
+  const testTour = new tourControllers({
+    name: 'The Ganpatipule',
+    rating: 4.7,
+    price: 499
+  });
+
+  testTour
+    .save()
+    .then(data => {
+      console.log(data);
+    })
+    .catch(err => {
+      console.log('err while creating tour');
+    });
+
   res.status(200).json({
     status: 'success',
     result: tours.length,
