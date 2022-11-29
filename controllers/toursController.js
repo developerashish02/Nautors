@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 const Tour = require('../model/tours');
 
 exports.getAllTours = async (req, res) => {
@@ -10,6 +9,7 @@ exports.getAllTours = async (req, res) => {
 
     let queryStr = JSON.stringify(queryObj);
 
+    // 1 SORTING
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
     let query = Tour.find(JSON.parse(queryStr));
 
@@ -18,8 +18,8 @@ exports.getAllTours = async (req, res) => {
       query = query.sort(sortBy);
     }
 
+    // 2 FIELDS
     if (req.query.fields) {
-      console.log(req.query.fields);
       const fields = req.query.fields.split(',').join(' ');
       query = query.select(fields);
       // const fields = req.query.fields
@@ -27,6 +27,18 @@ exports.getAllTours = async (req, res) => {
       query = query.select('-__v');
     }
 
+    // 3 PAGINATION
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 100;
+    const skip = (page - 1) * limit;
+    query = query.skip(skip).limit(limit);
+
+    if (req.query.page) {
+      const numTours = await Tour.countDocuments();
+      if (skip >= numTours) throw Error('This Page is not exist');
+    }
+
+    // EXICUTE QUERY
     const tours = await query;
     res.status(200).json({
       status: 'success',
