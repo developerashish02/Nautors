@@ -7,6 +7,7 @@ const usersControllers = require('../controllers/usersController');
 const auhtController = require('../controllers/auhecticationController');
 
 router.post('/sign-up', auhtController.signUp);
+router.post('/login', auhtController.login);
 
 router
   .route('/')
