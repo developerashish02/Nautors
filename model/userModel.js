@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcript = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -34,6 +35,19 @@ const userSchema = new mongoose.Schema({
       message: 'password and confirm password are not the same'
     }
   }
+});
+
+// mongoose middleware
+userSchema.pre('save', async function(next) {
+  //  1 only run this function when password is modified
+  if (!this.isModified('password')) return next();
+
+  // 2 Hash the password with cost of 12
+  this.password = await bcript.hash(this.password, 12);
+
+  // delete confirm password field
+  this.passwordConfirm = undefined;
+  next();
 });
 
 const User = mongoose.model('User', userSchema);
