@@ -10,11 +10,12 @@ const jwt = require('jsonwebtoken');
 // 1 SIGN IN USER
 exports.signUp = async function(req, res, next) {
   // get user data
+  const { name, email, password, passwordConfirm } = req.body;
   const newUser = await User.create({
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password,
-    passwordConfirm: req.body.passwordConfirm
+    name,
+    email,
+    password,
+    passwordConfirm
   });
 
   // token created
@@ -39,7 +40,6 @@ exports.signUp = async function(req, res, next) {
 };
 
 // 2 LOGIN USER
-
 exports.login = async function(req, res, next) {
   try {
     const { email, password } = req.body;
@@ -71,4 +71,17 @@ exports.login = async function(req, res, next) {
       message: error
     });
   }
+};
+
+exports.protect = async function() {
+  try {
+    //  1 GET THE TOKEN AND CHECK IT IS THERE
+
+    // 2 VALIDATE THE TOKEN
+
+    // 3 VERIFICATION TOKEN
+
+    // 4 CHECK IF USER STILL EXIST
+    next();
+  } catch (error) {}
 };
