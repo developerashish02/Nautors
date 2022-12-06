@@ -17,6 +17,10 @@ router
   .route('/:id')
   .get(usersControllers.getUser)
   .patch(usersControllers.updateUser)
-  .delete(usersControllers.deleteUser);
+  .delete(
+    auhtController.protect,
+    auhtController.restrictTo('admin'),
+    usersControllers.deleteUser
+  );
 
 module.exports = router;

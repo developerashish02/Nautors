@@ -18,6 +18,12 @@ const userSchema = new mongoose.Schema({
 
   photo: String,
 
+  role: {
+    type: String,
+    enum: ['user', 'guide', 'lead-guide', 'admin'],
+    default: 'user'
+  },
+
   password: {
     type: String,
     trim: true,
@@ -35,7 +41,8 @@ const userSchema = new mongoose.Schema({
       },
       message: 'password and confirm password are not the same'
     }
-  }
+  },
+  passwordChnagedAt: Date
 });
 
 // mongoose middleware
@@ -57,6 +64,21 @@ userSchema.methods.correctPassword = async function(
   userPassword
 ) {
   return await bcript.compare(candidatePassword, userPassword);
+};
+
+// user chnaged password
+userSchema.methods.chnagePasswordAfter = function(JWT_TIMESTAMP) {
+  // chnaged in mil second
+  const chnagedTimeStmap = parseInt(
+    this.passwordChnagedAt.getTime() / 1000,
+    10
+  );
+  if (this.passwordChnagedAt) {
+    return JWT_TIMESTAMP < chnagedTimeStmap;
+  }
+
+  // false mens NOT chnaged
+  return false;
 };
 
 const User = mongoose.model('User', userSchema);
