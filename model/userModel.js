@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcript = require('bcryptjs');
+const crypto = require('crypto');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -42,7 +43,9 @@ const userSchema = new mongoose.Schema({
       message: 'password and confirm password are not the same'
     }
   },
-  passwordChnagedAt: Date
+  passwordChnagedAt: Date,
+  passwordResetToken: String,
+  passwordResetExpire: Date
 });
 
 // mongoose middleware
@@ -79,6 +82,22 @@ userSchema.methods.chnagePasswordAfter = function(JWT_TIMESTAMP) {
 
   // false mens NOT chnaged
   return false;
+};
+
+userSchema.methods.createResetPasswordToken = function() {
+  const resetToken = crypto.randomBytes(32).toString('hex');
+
+  this.passwordResetToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+
+  console.log(resetToken, '#####');
+  console.log(this.passwordResetToken, '*****');
+
+  this.passwordResetExpire = Date.now() + 10 * 60 * 1000;
+
+  return resetToken;
 };
 
 const User = mongoose.model('User', userSchema);

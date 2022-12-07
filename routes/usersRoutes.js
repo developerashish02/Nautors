@@ -8,6 +8,8 @@ const auhtController = require('../controllers/auhecticationController');
 
 router.post('/sign-up', auhtController.signUp);
 router.post('/login', auhtController.login);
+router.post('/forgotPassword', auhtController.forgetPassword);
+router.post('/resetPassword', auhtController.resetPassword);
 
 router
   .route('/')

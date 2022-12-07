@@ -146,3 +146,24 @@ exports.restrictTo = (...roles) => {
     }
   };
 };
+
+exports.forgetPassword = async function(req, res, next) {
+  try {
+    // 1) Get user based on POSTed email
+    const user = await User.findOne({ email: req.body.email });
+
+    if (!user) {
+      throw 'There is no user with email address.';
+    }
+    // 2) Generate randam token
+    const resetToken = user.createResetPasswordToken();
+    await user.save({ validateBeforeSave: false });
+  } catch (error) {
+    res.status(404).json({
+      status: 'fail',
+      message: error
+    });
+  }
+};
+
+exports.resetPassword = function(req, res, next) {};
